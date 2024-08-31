@@ -16,7 +16,7 @@ def load_data_from_folder(folder_path):
     labels = np.load(os.path.join(folder_path, "train_labels.npy"))
     return data, labels
 
-base_path = r"./data"
+base_path = r"./training-data"
 
 train_data_path = os.path.join(base_path, "train_data.npy")
 train_labels_path = os.path.join(base_path, "train_labels.npy")
