@@ -1,4 +1,13 @@
 # DeepADAR
-## DeepADAR藿香光谱
-## 一种基于深度学习的藿香高光谱中轻松识别藿香类别的通用、准确方法
-藿香的高光谱数据中包含着关于藿香的丰富信息，但难以分析。在这项研究中，提出了一种名为DeepADAR的方法来解决这一问题。从本质上讲，它是一个结合了卷积神经网络（CNN）、长短时记忆网络(LSTM)和注意力机制（Attention）的深度学习模型，通过比较不同产地的藿香光谱数据。DeepADAR在三种类别的藿香高光谱数据分析中获得了可喜的结果。总之，它是一种准确、通用且即用型的方法，可用于各种应用场景中的藿香产地识别和掺假鉴定。
+## A general and accurate deep learning-based method for easily identifying Pogostemon cablin categories in hyperspectral data.
+The hyperspectral data of Pogostemon cablin contains rich information about Pogostemon cablin but is difficult to analyze. In this study, a method called DeepADAR was proposed to address this issue. Essentially, it is a deep learning model that combines Convolutional Neural Networks (CNN), Long Short-Term Memory Networks (LSTM), and Attention Mechanisms to compare the spectral data of Pogostemon cablin from different origins. DeepADAR achieved promising results in the analysis of hyperspectral data for three categories of Pogostemon cablin. In summary, it is an accurate, versatile, and ready-to-use method that can be applied to origin identification and adulteration detection of Pogostemon cablin in various scenarios.
+# Depends
+``pip install -r requirements.txt``
+# Usage
+1.Training your model
+
+Run the file 'training.py'. Since the data exceeded the limit, we have uploaded some example data for training，download at releases.
+
+2.Predict mixture spectra
+
+Run the file 'testing.py'. Some data has been upload as examples. The input 1 and input 2 represent pure component spectrum and unknown spectrum, respectively. More example data for testing can be download at releases.
