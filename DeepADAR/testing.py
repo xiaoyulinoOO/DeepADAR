@@ -87,8 +87,8 @@ net.load_state_dict(torch.load(model_path))
 net.eval()  # 设置模型为评估模式
 
 # 加载新数据
-new_data_path = r"\新数据.npy"  # 修改为实际数据路径
-new_labels_path = r"新标签.npy"  # 修改为实际标签路径
+new_data_path = r"./testing-data/testing_data.npy"  # 修改为实际数据路径
+new_labels_path = r"./testing-data/testing_labels.npy"  # 修改为实际标签路径
 new_data = np.load(new_data_path)
 new_labels = np.load(new_labels_path)
 
