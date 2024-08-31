@@ -1,0 +1,7 @@
+NumPy version: 1.26.4
+SciPy version: 1.10.1
+Pandas version: 1.2.4
+Matplotlib version: 3.5.1
+Scikit-learn version: 1.4.0
+Seaborn version: 0.13.2
+PyTorch version: 2.0.1+cpu
