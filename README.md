@@ -10,4 +10,4 @@ Run the file 'training.py'. Since the data exceeded the limit, we have uploaded 
 
 2.Predict mixture spectra
 
-Run the file 'testing.py'. Some data has been upload as examples. The input 1 and input 2 represent pure component spectrum and unknown spectrum, respectively. More example data for testing can be download at releases.
+Run the file 'testing.py'. More example data for testing can be download at releases.
