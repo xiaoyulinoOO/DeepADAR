@@ -6,25 +6,32 @@ from torch.utils.data import DataLoader, TensorDataset
 import torch.optim as optim
 import matplotlib.pyplot as plt
 import os
-
+from sklearn.preprocessing import StandardScaler
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 # 定义从文件夹加载数据的函数
 def load_data_from_folder(folder_path):
     data = np.load(os.path.join(folder_path, "merged_data.npy"))
     labels = np.load(os.path.join(folder_path, "merged_labels.npy"))
     return data, labels
 
-def load_new_data(base_path):
-    train_data = np.load(os.path.join(base_path, "merged_data.npy"))
-    train_labels = np.load(os.path.join(base_path, "merged_labels.npy"))
-    val_data = np.load(os.path.join(base_path, "val_data.npy"))
-    val_labels = np.load(os.path.join(base_path, "val_labels.npy"))
-    test_data = np.load(os.path.join(base_path, "test_data.npy"))
-    test_labels = np.load(os.path.join(base_path, "test_labels.npy"))
-    return train_data, train_labels, val_data, val_labels, test_data, test_labels
+base_path = r"./Fine-turning/training-data"
 
-# 设置新数据路径
-base_path = r"/autodl-fs/data/7-weitiao/zuizhongweitiao"
-train_data, train_labels, val_data, val_labels, test_data, test_labels = load_new_data(base_path)
+train_data_path = os.path.join(base_path, "merged_data.npy")
+train_labels_path = os.path.join(base_path, "merged_labels.npy")
+val_data_path = os.path.join(base_path, "val_data.npy")
+val_labels_path = os.path.join(base_path, "val_labels.npy")
+test_data_path = os.path.join(base_path, "test_data.npy")
+test_labels_path = os.path.join(base_path, "test_labels.npy")
+
+train_data = np.load(train_data_path)
+train_labels = np.load(train_labels_path)
+val_data = np.load(val_data_path)
+val_labels = np.load(val_labels_path)
+test_data = np.load(test_data_path)
+test_labels = np.load(test_labels_path)
+
 
 # 将数据转换为PyTorch张量
 train_data_tensor = torch.tensor(train_data, dtype=torch.float32).unsqueeze(1)  # 添加一个通道维度
@@ -41,6 +48,8 @@ test_dataset = TensorDataset(test_data_tensor, test_labels_tensor)
 train_loader = DataLoader(train_dataset, batch_size=512, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=512, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=512, shuffle=False)
+
+
 
 class Attention(nn.Module):
     def __init__(self, hidden_size):
@@ -115,30 +124,21 @@ class ResNet_CNN_LSTM(nn.Module):
 # 实例化模型
 net = ResNet_CNN_LSTM(input_size=256, hidden_size=128, num_layers=1, dropout=0.5)
 
-# 加载之前训练好的模型
-checkpoint_path = "resnet_lstm_cnn_final_model.pth"
-net.load_state_dict(torch.load(checkpoint_path))
-# 解冻全连接层
-for name, param in net.fc_extra.named_parameters():
-    param.requires_grad = True
-for name, param in net.fc1.named_parameters():
-    param.requires_grad = True
-for name, param in net.fc2.named_parameters():
-    param.requires_grad = True
 
-# 解冻注意力层
-for name, param in net.attention.named_parameters():
-    param.requires_grad = True
-
-# 解冻LSTM层
-for name, param in net.lstm.named_parameters():
-    param.requires_grad = True
-
-# 定义新的优化器，只优化解冻的层
-optimizer = optim.AdamW(filter(lambda p: p.requires_grad, net.parameters()), lr=0.001, weight_decay=1e-3)
-
+# 定义损失函数和优化器
 criterion = nn.CrossEntropyLoss()
+# 定义RAdam优化器
+import torch.optim as optim
+
+# 定义AdamW优化器
+optimizer = optim.AdamW(net.parameters(), lr=0.001, weight_decay=1e-3)
+
+
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, verbose=True)
+
+
+
+
 
 # 记录损失和准确率
 train_losses = []
@@ -165,7 +165,7 @@ if os.path.exists(checkpoint_path):
 
 # 训练模型
 # 训练模型
-num_epochs = 90
+num_epochs = 140
 for epoch in range(start_epoch, num_epochs):
     net.train()
     running_loss = 0.0
@@ -244,37 +244,52 @@ with torch.no_grad():
 
 test_accuracy = 100 * correct_test / total_test
 print(f"Test Accuracy: {test_accuracy:.2f}%")
+import matplotlib.pyplot as plt
 
-# 绘制训练过程中的损失曲线和准确率曲线
-plt.figure(figsize=(12, 5))
+# 设置字体和大小
+plt.rcParams['font.family'] = 'Times New Roman'
+plt.rcParams['font.size'] = 14
+
+# 创建图形和坐标轴
+plt.figure(figsize=(12, 6))
+fig, ax1 = plt.subplots()
 
 # 绘制损失曲线
-plt.subplot(1, 2, 1)
-plt.plot(train_losses, label='Train Loss')
-plt.plot(val_losses, label='Val Loss')
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.title('Training and Validation Loss')
-plt.legend()
+color = 'tab:blue'
+ax1.set_xlabel('Epoch')
+ax1.set_ylabel('Loss', color=color)
+ax1.plot(train_losses, label='Train Loss', color=color)
+ax1.plot(val_losses, label='Val Loss', color='tab:orange')
+ax1.tick_params(axis='y', labelcolor=color)
 
-# 绘制准确率曲线
-plt.subplot(1, 2, 2)
-plt.plot(train_accuracies, label='Train Accuracy', color='blue')
-plt.plot(val_accuracies, label='Val Accuracy', color='green')
-plt.xlabel('Epoch')
-plt.ylabel('Accuracy (%)')
-plt.title('Training and Validation Accuracy')
-plt.legend()
+# 创建右侧的Y轴
+ax2 = ax1.twinx()
+color = 'tab:green'
+ax2.set_ylabel('Accuracy (%)', color=color)
+ax2.plot(train_accuracies, label='Train Accuracy', color='tab:green')
+ax2.plot(val_accuracies, label='Val Accuracy', color='tab:red')
+ax2.tick_params(axis='y', labelcolor=color)
 
-plt.tight_layout()
-plot_save_path = "Resnet_CNN_LSTM-turning-training_plot.png"
-plt.savefig(plot_save_path)
+# 添加标题
+plt.title('Training and Validation Loss & Accuracy')
+
+# 合并图例并放置在中心右侧
+lines1, labels1 = ax1.get_legend_handles_labels()
+lines2, labels2 = ax2.get_legend_handles_labels()
+ax1.legend(lines1 + lines2, labels1 + labels2, loc='center right')
+
+# 确保图像布局紧凑
+fig.tight_layout()
+
+# 保存图像为 TIFF 格式，分辨率为 600 DPI
+plt.savefig(r'D:\光谱\论文\画图\修改后的图片\training_validation_loss_accuracy.tif', dpi=300, format='tif')
 plt.show()
 
+
 # 保存训练好的模型
-model_save_path = "resnet_lstm_cnn_turning-final_model.pth"
+model_save_path = "resnet_lstm_cnn_final_model.pth"
 torch.save(net.state_dict(), model_save_path)
 print(f"Trained model saved to {model_save_path}")
 
-print(f"Training plot saved to {plot_save_path}")
+
 print("Finished Training")
