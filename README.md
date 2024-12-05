@@ -11,3 +11,5 @@ Run the file 'training.py'. Since the data exceeded the limit, we have uploaded 
 2.Predict mixture spectra
 
 Run the file 'testing.py'. More example data for testing can be download at releases.
+# Front-end code
+The front-end code needs to be used together with the trained model.
