@@ -1,6 +1,6 @@
-# DeepADAR
+# DeepPHSI
 ## A general and accurate deep learning-based method for easily identifying Pogostemon cablin categories in hyperspectral data.
-The hyperspectral data of Pogostemon cablin contains rich information about Pogostemon cablin but is difficult to analyze. In this study, a method called DeepADAR was proposed to address this issue. Essentially, it is a deep learning model that combines Convolutional Neural Networks (CNN), Long Short-Term Memory Networks (LSTM), and Attention Mechanisms to compare the spectral data of Pogostemon cablin from different origins. DeepADAR achieved promising results in the analysis of hyperspectral data for three categories of Pogostemon cablin. In summary, it is an accurate, versatile, and ready-to-use method that can be applied to origin identification and adulteration detection of Pogostemon cablin in various scenarios.
+The hyperspectral data of Pogostemon cablin contains rich information about Pogostemon cablin but is difficult to analyze. In this study, a method called DeepPHSI was proposed to address this issue. Essentially, it is a deep learning model that combines Convolutional Neural Networks (CNN), Long Short-Term Memory Networks (LSTM), and Attention Mechanisms to compare the spectral data of Pogostemon cablin from different origins. DeepPHSI achieved promising results in the analysis of hyperspectral data for three categories of Pogostemon cablin. In summary, it is an accurate, versatile, and ready-to-use method that can be applied to origin identification and adulteration detection of Pogostemon cablin in various scenarios.
 # Depends
 ``pip install -r requirements.txt``
 # Usage
